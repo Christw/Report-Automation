@@ -1,4 +1,4 @@
-# Report automation
+# Report Automation
 
 ### Project Summary
 Automate the organized monthly traffic report for an ad placement each week through an existing report.
