@@ -1,0 +1,87 @@
+function Report_2() {
+  var s1 = SpreadsheetApp.openById('Spreadsheet ID'); //Original spreadsheet
+  var d1 = SpreadsheetApp.openById('Spreadsheet ID'); //New spreadsheet
+  var date = new Date(); 
+  d1.insertSheet("Sheet2").hideSheet(); //Created a sheet for the updated info
+  for (var k = 1; k < 3; k++) {
+  var date_format = date.getFullYear() +'.'+ (date.getMonth()+k);
+  var source = s1.getRange(date_format +'!A1:AJ242'); 
+  var source_value = source.getValues();
+  var destination = d1.getRange("Sheet2!A1:AJ242");
+  var destsheet = d1.getSheetByName(destination.getSheet().getName());
+  destsheet.hideSheet();
+  var destrange = destsheet.getRange(
+  destination.getRow(),
+  destination.getColumn(),
+  source_value.length,
+  source_value[0].length
+      ); 
+  destrange.setValues(source_value) //Get values from the original spreadsheet
+  var formula = '=filter(Sheet2!A:AJ,Sheet2!A:A="AD Placemnt")';
+  
+  //Use if condition to tell whether the sheet needs to be updated or created
+  if (d1.getSheetByName(date_format) == 'Sheet'){
+    var destination = d1.getSheetByName(date_format); 
+    destination.clear();
+    var sheet1 = d1.getSheetByName("Sheet1");
+    sheet1.getRange(2,1).setValue(formula);
+    var cCopy = sheet1.getRange(1,1,sheet1.getLastRow(),sheet1.getLastColumn()).getValues();
+    destination.getRange(1,1,cCopy.length,cCopy[0].length).setValues(cCopy);
+    destination.deleteColumns(2,2);
+    destination.deleteColumns("3");
+    destination.getRange("Sheet2!A:AJ").clear();
+    var title = d1.getSheetByName("Sheet1").getRange("A1:AG1").getValues();
+    destination.getRange("A1:AG1").setValues(title).setBorder(true,true,true,true,true,true,'black',SpreadsheetApp.BorderStyle.SOLID);
+    destination.setColumnWidths(1, 2, 250);
+    destination.getRange('A1:B1').setBackground('#FFF2CC');
+    destination.getRange('C1:AG1').setBackground('#CFE2F3');
+    destination.getRange(1,1,destination.getLastRow(),2).setBorder(true,true,true,true,true,true,'black',SpreadsheetApp.BorderStyle.SOLID);
+    var sum = 'Daily Impression SUM';
+    destination.getRange(destination.getLastRow()+1,1,1,2).mergeAcross().setBackground('#D9D9D9').setValue(sum);
+    destination.getRange(destination.getLastRow(),3,1,31).setBorder(true,false,false,false,false,false,'black',SpreadsheetApp.BorderStyle.DOUBLE);
+    destination.getRange(1,1,destination.getLastRow(),destination.getLastColumn()).setHorizontalAlignment("center");
+    round = ['C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB','AC','AD','AE','AF','AG'];
+    for (var i = 0; i < round.length; i++) {
+      var last = destination.getLastRow();
+      var before_last = last -1;
+      var second = '2';
+      var sum_formula = '=SUM('+ round[i] + second + ':' + round[i] + before_last +') ';
+      destination.getRange(last,3+i,1,1).setValue(sum_formula)
+    }
+    destination.getRange(2,3,destination.getLastRow(),destination.getLastColumn()).setNumberFormat("#,##0");
+
+  }else{
+    d1.insertSheet(date_format); 
+    var destination = d1.getSheetByName(date_format); 
+    var sheet1 = d1.getSheetByName("Sheet1");
+    sheet1.getRange(2,1).setValue(formula);
+    var cCopy = sheet1.getRange(1,1,sheet1.getLastRow(),sheet1.getLastColumn()).getValues();
+    destination.getRange(1,1,cCopy.length,cCopy[0].length).setValues(cCopy);
+    destination.deleteColumns(2,2);
+    destination.deleteColumns("3");
+    var title = d1.getSheetByName("Sheet1").getRange("A1:AG1").getValues();
+    destination.getRange("A1:AG1").setValues(title).setBorder(true,true,true,true,true,true,'black',SpreadsheetApp.BorderStyle.SOLID);
+    destination.setColumnWidths(1, 2, 250);
+    destination.getRange('A1:B1').setBackground('#FFF2CC');
+    destination.getRange('C1:AG1').setBackground('#CFE2F3');
+    destination.getRange(1,1,destination.getLastRow(),2).setBorder(true,true,true,true,true,true,'black',SpreadsheetApp.BorderStyle.SOLID);
+    var sum = 'Daily Impression SUM'
+    destination.getRange(destination.getLastRow()+1,1,1,2).mergeAcross().setBackground('#D9D9D9').setValue(sum);
+    destination.getRange(destination.getLastRow(),3,1,31).setBorder(true,false,false,false,false,false,'black',SpreadsheetApp.BorderStyle.DOUBLE);
+    destination.getRange(1,1,destination.getLastRow(),destination.getLastColumn()).setHorizontalAlignment("center");
+    round = ['C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB','AC','AD','AE','AF','AG'];
+    for (var i = 0; i < round.length; i++) {
+      var last = destination.getLastRow();
+      var before_last = last -1;
+      var second = '2';
+      var sum_formula = '=SUM('+ round[i] + second + ':' + round[i] + before_last +') ';
+      destination.getRange(last,3+i,1,1).setValue(sum_formula)
+    }
+    sheet1.getRange(2,1,sheet1.getLastRow(),sheet1.getLastColumn()).clearContent();
+    d1.moveActiveSheet(d1.getNumSheets());
+    destination.getRange(2,3,destination.getLastRow(),destination.getLastColumn()).setNumberFormat("#,##0");
+    }
+  }
+  d1.deleteSheet(d1.getSheetByName('Sheet2')); //Delete the sheet used for passing the values
+  d1.getSheetByName("Sheet1").getRange(2,1).clear();
+}
